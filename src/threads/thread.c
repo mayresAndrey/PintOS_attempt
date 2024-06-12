@@ -19,6 +19,7 @@
    Used to detect stack overflow.  See the big comment at the top
    of thread.h for details. */
 #define THREAD_MAGIC 0xcd6abf4b
+#define A 55
 
 /* List of processes in THREAD_READY state, that is, processes
    that are ready to run but not actually running. */
@@ -557,6 +558,11 @@ schedule (void)
   struct thread *prev = NULL;
 
   ASSERT (intr_get_level () == INTR_OFF);
+  /* TODO:
+   * Ver de usar o thread_block, mas para o schedule 
+   * tem de verificar se uma thread esta bloqueada, alem de implementar 
+   * o unblock com o tempo
+   * */
   ASSERT (cur->status != THREAD_RUNNING);
   ASSERT (is_thread (next));
 
