@@ -1,4 +1,4 @@
-# pintOS
+# Introduzindo PintOS
 <details>
 <summary>Mudanças no ./src </summary>
 
@@ -19,7 +19,7 @@ não precisa nem no `make check` do src/threads/build (se der algum erro oque fo
 <details>
     <summary>Alarm</summary>
     Reimplementar ` timer_sleep()` no `device/time.c` que ta originalmente implementado com 'busy wait',
-    que fica chamando `thread_yiel()` enquanto o tempo não tiver passado
+    que fica chamando `thread_yield()` enquanto o tempo não tiver passado
     ideia:
     Adicionar a verificação ao scheduler, adicionando um campo na struct de threads para indicar o tempo que ela deve ficar parada se tiver com status de blocking
 </details>
@@ -49,6 +49,3 @@ O kernel não suporta float nem double, então a doc recomenda usar o formato de
 </details>
 
 
-Equipe:
-| [<img src="https://avatars.githubusercontent.com/u/96800329?v=4" width=115><br><sub>Luiz Gustavo</sub>](https://github.com/Zed201) |  [<img src="https://avatars.githubusercontent.com/u/101292201?v=4" width=115><br><sub>Heitor Melo</sub>](https://github.com/HeitorMelo)  | [<img src="https://avatars.githubusercontent.com/u/129231720?v=4" width=115><br><sub>Henrique César</sub>](https://github.com/SapoSopa) | [<img src="https://avatars.githubusercontent.com/u/136932932?v=4" width=115><br><sub>Emanuelle Giovanna</sub>](https://github.com/manugio3)
-| :---: | :---: | :--:| :--:|
