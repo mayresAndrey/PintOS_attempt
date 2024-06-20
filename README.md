@@ -146,7 +146,8 @@ O kernel não suporta float nem double, então a doc recomenda usar o formato de
 
 </details>
 <details>
-Para nossa aplicação do projeto de Infraestrutura de Software, nenhum dos testes de priority serão exigidos;
+- Para nossa aplicação do projeto de Infraestrutura de Software, nenhum dos testes de priority serão exigidos;
+- Há esse vídeo de guia sobre o assunto, caso necessite de ajuda: `https://www.youtube.com/watch?v=myO2bs5LMak`;
 </details>
 
 
