@@ -14,33 +14,39 @@ não precisa nem no `make check` do src/threads/build (se der algum erro oque fo
 <details>
 <summary>Recursos necessários </summary>
 
-<details>
-<summary>Make </summary>
 
-- O make serve para ajudar nossa vida. Não há uma obrigatoriedade de usá-lo, mas iremos;
-- Caso necessite instalá-lo, utilize o comando `sudo apt install make`;
-</details>
+1. 
+   <details>
+   <summary>Make </summary>
+   
+   - O make serve para ajudar nossa vida. Não há uma obrigatoriedade de usá-lo, mas iremos;
+   - Caso necessite instalá-lo, utilize o comando `sudo apt install make`;
+   </details>
 
-<details>
-<summary>GCC e GDB </summary>
+2.
+   <details>
+   <summary>GCC e GDB </summary>
+   
+   - Compilador e Depurador para C;
+   - Caso necessite instalá-los, utilize os comandos `sudo apt install gcc` e `sudo apt install gdb`;
+   </details>
 
-- Compilador e Depurqador para C;
-- Caso necessite instalá-los, utilize os comandos `sudo apt install gcc` e `sudoapt install gdb`;
-</details>
+3. 
+   <details>
+   <summary>Qemu </summary>
+   
+   - Recurso necessário para executar o sistema nos casos testes;
+   - Caso necessite instalá-lo, utilize o comando `sudo apt install qemu-system-i386`;
+   </details>
 
-<details>
-<summary>Qemu </summary>
+4. 
+   <details>
+   <summary>Boch </summary>
+   
+   - Alternativa mais rápida ao Qemu, entretanto não utilizaremos ele;
+   - Se desejar saber como fazê-lo funcionar, acesse `https://web.stanford.edu/class/cs140/projects/pintos/pintos_12.html#SEC167`;
+   </details>
 
-- Recurso necessário para executar o sistema nos casos testes;
-- Caso necessite instalá-lo, utilize o comando `sudo apt install qemu-system-i386`;
-</details>
-
-<details>
-<summary>Boch </summary>
-
-- Alternativa mais rápido ao Qemu, entretanto não utilizaremos ele;
-- Se desejar saber como fazê-lo funciona, acesse `https://web.stanford.edu/class/cs140/projects/pintos/pintos_12.html#SEC167`;
-</details>
 </details>
 
 <details>
@@ -103,6 +109,44 @@ p = floor(PriMax - (\frac{RecentCpuTime}{4}) - (nice * 2))
 ```
 ##### Pontos Flutuantes
 O kernel não suporta float nem double, então a doc recomenda usar o formato de 17.14, 17 bits para a parte inteira e 14 para a fracionária; Para transformar reais nesses tipos é só multiplicar por 2^Q, onde Q é o numero de bits separado para a parte fracionária, e truncar para int, a documentação recomenda usar isso no recent cpu time e no avg, nesse caso então vai basicamente simular operações em float usando inteiros(ver [aqui](https://www.scs.stanford.edu/23wi-cs212/pintos/pintos_7.html) como as operações podem ser feitas;
+</details>
+
+<details>
+    <summary>Tests</summary>
+
+
+- [ ] tests/threads/alarm-single
+- [ ] tests/threads/alarm-multiple
+- [ ] tests/threads/alarm-simultaneous
+- [ ] tests/threads/alarm-priority
+- [ ] tests/threads/alarm-zero
+- [ ] tests/threads/alarm-negative
+- [ ] tests/threads/priority-change
+- [ ] tests/threads/priority-donate-one
+- [ ] tests/threads/priority-donate-multiple
+- [ ] tests/threads/priority-donate-multiple2
+- [ ] tests/threads/priority-donate-nest
+- [ ] tests/threads/priority-donate-sema
+- [ ] tests/threads/priority-donate-lower
+- [ ] tests/threads/priority-fifo
+- [ ] tests/threads/priority-preempt
+- [ ] tests/threads/priority-sema
+- [ ] tests/threads/priority-condvar
+- [ ] tests/threads/priority-donate-chain
+- [ ] tests/threads/mlfqs-load-1
+- [ ] tests/threads/mlfqs-load-60
+- [ ] tests/threads/mlfqs-load-avg
+- [ ] tests/threads/mlfqs-recent-1
+- [ ] tests/threads/mlfqs-fair-2
+- [ ] tests/threads/mlfqs-fair-20
+- [ ] tests/threads/mlfqs-nice-2
+- [ ] tests/threads/mlfqs-nice-10
+- [ ] tests/threads/mlfqs-block
+
+
+</details>
+<details>
+Para nossa aplicação do projeto de Infraestrutura de Software, nenhum dos testes de priority serão exigidos;
 </details>
 
 
