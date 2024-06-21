@@ -98,7 +98,7 @@ não precisa nem no `make check` do src/threads/build (se der algum erro oque fo
 <details>
    <summary>Scheduler</summary>
    
-   Implementar uma mlfqs, na documentação oficial ele sugere para dar opção de ter o mlfqs ou o por prioridade, então deveria implementar os dois (porém nosso projeto não almeja a implementação do por prioridade); Com o mlfqs as prioridades definidas pelas threads devem ser ignoradas e controladas pelo escalonador;
+   Na documentação oficial, ele sugere para dar opção de ter o mlfqs ou o por prioridade, ou seja, implementar ambos, porém nosso projeto não almeja a implementação do por prioridade; com o mlfqs as prioridades definidas pelas threads devem ser ignoradas e controladas pelo escalonador;
        
    [Fila esquema](https://www.google.com/url?sa=i&url=https://medium.com/@francescofranco_39234/multilevel-feedback-queue-3ae862436a95&psig=AOvVaw0uPvTNvKvDx0bKwYGvKyn_&ust=1718223750727000&source=images&cd=vfe&opi=89978449&ved=0CBIQjRxqFwoTCLD727Sw1IYDFQAAAAAdAAAAABAI)
    
