@@ -72,8 +72,9 @@ não precisa nem no `make check` do src/threads/build (se der algum erro oque fo
 <details>
 <summary>Observações </summary>
 
-- Todas as operações foram verificadas também no WSL;
+- Todas as operações descritas foram verificadas também no WSL;
 - É possivel executar os comandos do Boch normalmente, porém se você não tiver ajustado ele, os resultados dos testes ficarão 27 de 27 falhas (testado no WSL);
+- Há a opção de seguir o tutorial no arquivo `Exec_pintos.pdf` caso não queira fazer as modificações por si mesmo;
 </details>
 
 ### Objetivos:
