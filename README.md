@@ -79,13 +79,12 @@ não precisa nem no `make check` do src/threads/build (se der algum erro oque fo
 
 ### Objetivos:
 - [ ] Alarm Clock;
-- [ ] Advanced Scheduler;
+- [ ] Advanced Scheduler - Multi-Level Feedback Queue (mlfqs);
 ### Detalhamentos:
 <details>
    <sumary>Objetivos Principais</sumary>
    
-   Modificar o PintOS para que a lógica de sleep/wake para o alarme de forma devida. Nesse processo,
-   os arquivos a serem modificados devem ser apenas os `src/device/timer.` e o `src/threads/thread.`;
+   Modificar o PintOS para que a lógica de sleep/wake funcione no alarme de forma devida e implementar devidamente a mlfqs. Nesse processo, os arquivos a serem modificados devem ser apenas os `src/device/timer.` e o `src/threads/thread.`;
    
 </details>
 <details>
