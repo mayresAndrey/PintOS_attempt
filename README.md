@@ -65,6 +65,7 @@ não precisa nem no `make check` do src/threads/build (se der algum erro oque fo
 - Caso deseje executar novamente, lembre-se de dar `make clean` antes de usar o proximo `make check`;
 - Existe o comando `make check VERBOSE=1` fará com que tudo seja executado de maneira mais limpa em que cada teste aparecerá no terminal apenas durante sua execução;
 - Você também pode executar o `make ngui TEST=nome_do_teste` na pasta `src/threads` após o make para executar apenas um teste específico;
+- Caso você queira, pode ir na pasta `src/tests/threads` e modificar os arquivos da `teste.c` para que o `make check` execute apenas os casos que deseja;
 - Todos os testes executados geram alguns arquivos relatando a saida e se passou ou não, que ficam na pasta `src/threads/build/tests`;
 </details>
 
@@ -113,7 +114,7 @@ O kernel não suporta float nem double, então a doc recomenda usar o formato de
 
 <details>
     <summary>Tests</summary>
-
+- Esses são todos os testes que serão executados quando usar o comando MakeCheck:
 
 - [ ] tests/threads/alarm-single
 - [ ] tests/threads/alarm-multiple
@@ -146,6 +147,7 @@ O kernel não suporta float nem double, então a doc recomenda usar o formato de
 
 </details>
 <details>
+   
 - Para nossa aplicação do projeto de Infraestrutura de Software, nenhum dos testes de priority serão exigidos;
 - Há esse vídeo de guia sobre o assunto, caso necessite de ajuda: `https://www.youtube.com/watch?v=myO2bs5LMak`;
 </details>
