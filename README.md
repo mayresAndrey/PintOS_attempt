@@ -151,6 +151,7 @@ O kernel não suporta float nem double, então a doc recomenda usar o formato de
 <details>
    
 - Para nossa aplicação do projeto de Infraestrutura de Software, nenhum dos testes de priority serão exigidos;
+- Os testes do alarm, quando executado, podem sinalizar que estão funcionando, porém, estão em espera ocupado, portanto não estão devidamente implementado;
 - Há esse vídeo de guia sobre o assunto, caso necessite de ajuda: `https://www.youtube.com/watch?v=myO2bs5LMak`;
 </details>
 
