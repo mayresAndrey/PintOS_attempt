@@ -303,14 +303,16 @@ void
 thread_yield (void) 
 {
   struct thread *cur = thread_current ();
+
   enum intr_level old_level;
   
   ASSERT (!intr_context ());
 
   old_level = intr_disable ();
   if (cur != idle_thread) 
-    list_push_back (&ready_list, &cur->elem);
-  cur->status = THREAD_READY;
+    list_push_back (&ready_list, &cur->elem); 
+  //estava THREAD_READY
+  cur->status = THREAD_BLOCKED; 
   schedule ();
   intr_set_level (old_level);
 }
@@ -558,7 +560,7 @@ schedule (void)
   struct thread *prev = NULL;
 
   ASSERT (intr_get_level () == INTR_OFF);
-  /* TODO:
+  /* TO DO:
    * Ver de usar o thread_block, mas para o schedule 
    * tem de verificar se uma thread esta bloqueada, alem de implementar 
    * o unblock com o tempo

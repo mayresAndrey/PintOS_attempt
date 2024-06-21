@@ -1,0 +1,6 @@
+No documento thread.c
+    void thread_yield (void)
+        Troca do THREAD_READY por THREAD_BLOCKED
+No documento timer.c
+    vois timer_sleep(void)
+        Comentando o while

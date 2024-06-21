@@ -83,7 +83,7 @@ timer_elapsed (int64_t then)
 {
   return timer_ticks () - then;
 }
-
+//====================================================================
 /* Sleeps for approximately TICKS timer ticks.  Interrupts must
    be turned on. */
 void
@@ -95,6 +95,7 @@ timer_sleep (int64_t ticks)
   while (timer_elapsed (start) < ticks) 
     thread_yield ();
 }
+//====================================================================
 
 /* Sleeps for approximately MS milliseconds.  Interrupts must be
    turned on. */
