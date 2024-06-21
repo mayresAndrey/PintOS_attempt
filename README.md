@@ -109,7 +109,7 @@ O nice é específico de cada thread, tem funções para implementar e ele funci
 p = floor(PriMax - (\frac{RecentCpuTime}{4}) - (nice * 2))
 ```
 ##### Pontos Flutuantes
-O kernel não suporta float nem double, então a doc recomenda usar o formato de 17.14, 17 bits para a parte inteira e 14 para a fracionária; Para transformar reais nesses tipos é só multiplicar por 2^Q, onde Q é o numero de bits separado para a parte fracionária, e truncar para int, a documentação recomenda usar isso no recent cpu time e no avg, nesse caso então vai basicamente simular operações em float usando inteiros(ver [aqui](https://www.scs.stanford.edu/23wi-cs212/pintos/pintos_7.html) como as operações podem ser feitas;
+O kernel não suporta float nem double, então a documentação recomenda usar o formato de 17.14, 17 bits para a parte inteira e 14 para a fracionária; Para transformar reais nesses tipos basta multiplicar por 2^Q, onde Q é o numero de bits separado para a parte fracionária, e truncar para int, a documentação recomenda usar isso no recent cpu time e no avg, basicamente simulando operações em float usando inteiros (ver [aqui](https://www.scs.stanford.edu/23wi-cs212/pintos/pintos_7.html) como as operações podem ser feitas);
 </details>
 
 <details>
