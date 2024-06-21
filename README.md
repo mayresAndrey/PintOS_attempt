@@ -65,7 +65,7 @@ não precisa nem no `make check` do src/threads/build (se der algum erro oque fo
 - Caso deseje executar novamente, lembre-se de dar `make clean` antes de usar o proximo `make check`;
 - Existe o comando `make check VERBOSE=1` fará com que tudo seja executado de maneira mais limpa em que cada teste aparecerá no terminal apenas durante sua execução;
 - Você também pode executar o `make ngui TEST=nome_do_teste` na pasta `src/threads` após o make para executar apenas um teste específico;
-- Caso você queira, pode ir na pasta `src/tests/threads` e modificar os arquivos da `teste.c` para que o `make check` execute apenas os casos que deseja;
+- Caso você queira, pode ir na pasta `src/tests/threads` e modificar os arquivos da `tests.c` para que o `make check` execute apenas os casos que deseja;
 - Todos os testes executados geram alguns arquivos relatando a saida e se passou ou não, que ficam na pasta `src/threads/build/tests`;
 </details>
 
@@ -114,36 +114,38 @@ O kernel não suporta float nem double, então a doc recomenda usar o formato de
 
 <details>
     <summary>Tests</summary>
-- Esses são todos os testes que serão executados quando usar o comando MakeCheck:
+   
+- Esses são todos os testes que serão executados quando usar o comando `make check` (caso não altere o `scr/tests/threads/tests.c`):
 
-- [ ] tests/threads/alarm-single
-- [ ] tests/threads/alarm-multiple
-- [ ] tests/threads/alarm-simultaneous
-- [ ] tests/threads/alarm-priority
-- [ ] tests/threads/alarm-zero
-- [ ] tests/threads/alarm-negative
-- [ ] tests/threads/priority-change
-- [ ] tests/threads/priority-donate-one
-- [ ] tests/threads/priority-donate-multiple
-- [ ] tests/threads/priority-donate-multiple2
-- [ ] tests/threads/priority-donate-nest
-- [ ] tests/threads/priority-donate-sema
-- [ ] tests/threads/priority-donate-lower
-- [ ] tests/threads/priority-fifo
-- [ ] tests/threads/priority-preempt
-- [ ] tests/threads/priority-sema
-- [ ] tests/threads/priority-condvar
-- [ ] tests/threads/priority-donate-chain
-- [ ] tests/threads/mlfqs-load-1
-- [ ] tests/threads/mlfqs-load-60
-- [ ] tests/threads/mlfqs-load-avg
-- [ ] tests/threads/mlfqs-recent-1
-- [ ] tests/threads/mlfqs-fair-2
-- [ ] tests/threads/mlfqs-fair-20
-- [ ] tests/threads/mlfqs-nice-2
-- [ ] tests/threads/mlfqs-nice-10
-- [ ] tests/threads/mlfqs-block
-
+| # | Teste | Implementada | Testada | Funcionando |
+|---|-----------|:-----------:|:-------:|:-----------:|
+| 1  | `alarm-single`|      ❌     |    ❌    |      ❌      |
+| 2  | `alarm-multiple`|      ❌     |    ❌    |      ❌      |
+| 3  | `alarm-simultaneous`|      ❌     |    ❌    |      ❌      |
+| 4  | `alarm-priority`*|      ❌     |    ❌    |      ❌      |
+| 5  | `alarm-zero`|      ❌     |    ❌    |      ❌      |
+| 6  | `alarm-negative`|      ❌     |    ❌    |      ❌      |
+| 7  | `priority-change`*|      ❌     |    ❌    |      ❌      |
+| 8  | `priority-donate-one`*|      ❌     |    ❌    |      ❌      |
+| 9  | `priority-donate-multiple`*|      ❌     |    ❌    |      ❌      |
+| 10 | `priority-donate-multiple2`*|      ❌     |    ❌    |      ❌      |
+| 11 | `priority-donate-nest`*|      ❌     |    ❌    |      ❌      |
+| 12 | `priority-donate-sema`*|      ❌     |    ❌    |      ❌      |
+| 13 | `priority-donate-lower`*|      ❌     |    ❌    |      ❌      |
+| 14 | `priority-fifo`*|      ❌     |    ❌    |      ❌      |
+| 15 | `priority-preempt`*|      ❌     |    ❌    |      ❌      |
+| 16 | `priority-sema`*|      ❌     |    ❌    |      ❌      |
+| 17 | `priority-condvar`*|      ❌     |    ❌    |      ❌      |
+| 18 | `priority-donate-chain`*|      ❌     |    ❌    |      ❌      |
+| 19 | `mlfqs-load-1`|      ❌     |    ❌    |      ❌      |
+| 20 | `mlfqs-load-60`|      ❌     |    ❌    |      ❌      |
+| 21 | `mlfqs-load-avg`|      ❌     |    ❌    |      ❌      |
+| 22 | `mlfqs-recent-1`|      ❌     |    ❌    |      ❌      |
+| 23 | `mlfqs-fair-2`|      ❌     |    ❌    |      ❌      |
+| 24 | `mlfqs-fair-20`|      ❌     |    ❌    |      ❌      |
+| 25 | `mlfqs-nice-2`|      ❌     |    ❌    |      ❌      |
+| 26 | `mlfqs-nice-10`|      ❌     |    ❌    |      ❌      |
+| 27 | `mlfqs-block`|      ❌     |    ❌    |      ❌      |
 
 </details>
 <details>
