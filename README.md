@@ -168,7 +168,7 @@ não precisa nem no `make check` do src/threads/build (se der algum erro oque fo
    
    - Para nossa aplicação do projeto de Infraestrutura de Software, nenhum dos testes de priority serão exigidos;
    - Os testes do alarm, quando executado, podem sinalizar que estão funcionando, porém, estão em espera ocupado, portanto não estão devidamente implementado;
-   - Há esse vídeo de guia sobre o assunto, caso necessite de ajuda: `https://www.youtube.com/watch?v=myO2bs5LMak`;
+   - Há esses vídeos de guia sobre o assunto, caso necessite de ajuda: `https://www.youtube.com/watch?v=myO2bs5LMak` e `https://www.youtube.com/watch?v=57r9OCN1EfA` (são aulas sobre a implementação do projeto completo do PintOS);
 </details>
 
 
