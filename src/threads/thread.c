@@ -95,6 +95,7 @@ thread_init (void)
 
   lock_init (&tid_lock);
   list_init (&ready_list);
+  list_init (&blocked_list);
   list_init (&all_list);
 
   /* Set up a thread structure for the running thread. */
@@ -226,8 +227,11 @@ thread_block (void)
   ASSERT (!intr_context ());
   ASSERT (intr_get_level () == INTR_OFF);
 
-  thread_current ()->status = THREAD_BLOCKED;
-  schedule ();
+  struct thread* cur = thread_current();
+  // list_push_back(&blocked_list, &cur->elem);
+  cur->status = THREAD_BLOCKED;
+
+  schedule();
 }
 
 /* Transitions a blocked thread T to the ready-to-run state.
@@ -247,8 +251,8 @@ thread_unblock (struct thread *t)
 
   old_level = intr_disable ();
   ASSERT (t->status == THREAD_BLOCKED);
-  list_push_back (&ready_list, &t->elem);
-  t->status = THREAD_READY;
+  list_push_back (&ready_list, &t->elem); 
+  t->status = THREAD_READY; 
   intr_set_level (old_level);
 }
 

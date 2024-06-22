@@ -145,7 +145,7 @@ void list_push_back (struct list *, struct list_elem *);
 
 /* List removal. */
 struct list_elem *list_remove (struct list_elem *);
-struct list_elem *list_pop_front (struct list *);
+struct list_elem *list_pop_front (struct list *); 
 struct list_elem *list_pop_back (struct list *);
 
 /* List elements. */
@@ -158,7 +158,7 @@ bool list_empty (struct list *);
 
 /* Miscellaneous. */
 void list_reverse (struct list *);
-
+
 /* Compares the value of two list elements A and B, given
    auxiliary data AUX.  Returns true if A is less than B, or
    false if A is greater than or equal to B. */

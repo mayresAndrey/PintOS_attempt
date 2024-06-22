@@ -1,3 +1,0 @@
-No documento thread.c
-    void thread_yield (void)
-        Troca do THREAD_READY por THREAD_BLOCKED
