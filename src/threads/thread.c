@@ -25,6 +25,9 @@
    that are ready to run but not actually running. */
 static struct list ready_list;
 
+/*Lista de processos no estado de THREAD_BLOCKED*/
+static struct list blocked_list;
+
 /* List of all processes.  Processes are added to this list
    when they are first scheduled and removed when they exit. */
 static struct list all_list;
@@ -321,7 +324,7 @@ thread_yield (void)
   old_level = intr_disable ();
   if (cur != idle_thread) 
     list_push_back (&ready_list, &cur->elem); 
-  //estava THREAD_READY
+  //estava THREAD_READY 
   cur->status = THREAD_BLOCKED; 
   schedule ();
   intr_set_level (old_level);
