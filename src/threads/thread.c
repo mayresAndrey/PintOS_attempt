@@ -63,6 +63,10 @@ static unsigned thread_ticks;   /* # of timer ticks since last yield. */
    Controlled by kernel command-line option "-o mlfqs". */
 bool thread_mlfqs;
 
+/* System-wide segundo o documento do site*/
+float load_avg; //eh um numero real
+int ready_threads; //não sei onde calcula isso aqui
+
 static void kernel_thread (thread_func *, void *aux);
 
 static void idle (void *aux UNUSED);
@@ -123,7 +127,10 @@ thread_start (void)
 }
 
 //==============================================================================================================
-
+/*NAO SEI EXATAMENTE ONDE COLOCA O recent_cpu
+  Each time a timer interrupt occurs, recent_cpu 
+  is incremented by 1 for the running thread only, 
+  unless the idle thread is running.*/
 /* Called by the timer interrupt handler at each timer tick.
    Thus, this function runs in an external interrupt context. */
 void
@@ -132,18 +139,23 @@ thread_tick (void)
   struct thread *t = thread_current ();
 
   /* Update statistics. */
-  if (t == idle_thread)
+  if (t == idle_thread){
     idle_ticks++;
+    // __addsf3(t->recent_cpu, 1);
+  }
 #ifdef USERPROG
   else if (t->pagedir != NULL)
     user_ticks++;
 #endif
-  else
+  else{
     kernel_ticks++;
-
+    __addsf3(t->recent_cpu, 1); //testando
+  }
   /* Enforce preemption. */
-  if (++thread_ticks >= TIME_SLICE)
+  if (++thread_ticks >= TIME_SLICE){
     intr_yield_on_return ();
+    // __addsf3(t->recent_cpu, 1);
+  }
 }
 
 /* Prints thread statistics. */
@@ -373,37 +385,52 @@ thread_get_priority (void)
 
 /* Sets the current thread's nice value to NICE. */
 void
-thread_set_nice (int nice UNUSED) 
+thread_set_nice (int nice) 
 {
-  /* Not yet implemented. */
+  struct thread *cur = thread_current(); 
+  cur->nice = nice; 
+
+  //recalculando a prioridade 
+  //ver se precisa mudar algo aqui por causa de recent_cpu ser um float
+  cur->priority = PRI_MAX - __mulsf3(cur->recent_cpu,(1/4)) - (cur->nice*2); 
+  
+  /* TEXTO TIRADO DAQUELE SITE DA STANFORD
+    Sets the current thread's nice value to new_nice 
+    and recalculates the thread's priority based on 
+    the new value (see section B.2 Calculating Priority). 
+    If the running thread no longer has the highest priority, yields.*/
+  
+  //a thread vai parar caso nao estiver na mais alta prioridade
 }
 
 /* Returns the current thread's nice value. */
 int
 thread_get_nice (void) 
 {
-  /* Not yet implemented. */
-  return 0;
+  //mandando o nice
+  return thread_current()->nice;
 }
 
 //==============================================================================================================
 
 /* Returns 100 times the system load average. */
-int
+int //float??
 thread_get_load_avg (void) 
 {
-  /* Not yet implemented. */
-  return 0;
+  /* mandando 100 * load_avd do system-wide */
+  //ver se precisa mudar algo aqui por causa de load_avg ser um float
+  return 100 * load_avg; 
 }
 
 /* Returns 100 times the current thread's recent_cpu value. */
 int
 thread_get_recent_cpu (void) 
 {
-  /* Not yet implemented. */
-  return 0;
+  /* mandando 100*recent_cpu da thread atual */
+  //ver se precisa mudar algo aqui por causa de recent_cpu ser um float
+  return 100 * thread_current()->recent_cpu;
 }
-
+
 
 //==============================================================================================================
 
@@ -498,8 +525,13 @@ init_thread (struct thread *t, const char *name, int priority)
   t->status = THREAD_BLOCKED;
   strlcpy (t->name, name, sizeof t->name);
   t->stack = (uint8_t *) t + PGSIZE;
-  t->priority = priority;
   t->magic = THREAD_MAGIC;
+
+  t->nice = 0; /* Sempre começa como '0'. */
+  t->recent_cpu = 0; /* Também sempre começa com '0'. */
+
+  t->priority = priority; /*  Talvez mudar isso. obs.: tem que 
+                              depender do nice e do recent_cpu. */
 
   old_level = intr_disable ();
   list_push_back (&all_list, &t->allelem);

@@ -166,13 +166,31 @@ timer_print_stats (void)
 {
   printf ("Timer: %"PRId64" ticks\n", timer_ticks ());
 }
-
+
 /* Timer interrupt handler. */
 static void
 timer_interrupt (struct intr_frame *args UNUSED)
 {
   ticks++;
   thread_tick ();
+
+  /*apenas quando essa condição for verdadeira que pode 
+    recalcular o recent_cpu da thread e o load_avg*/
+  if(timer_ticks() % TIMER_FREQ == 0){
+    //ver em qual dos dois precisa calcular primeiro
+
+    //atualizar também o load_avg com essa condição
+    //ver se precisa mudar algo aqui por causa de load_avg ser um float
+    load_avg = (59/60)*load_avg + (1/60)*ready_threads; 
+    
+    struct thread *cur = thread_current();
+    //ver se precisa mudar algo aqui por causa de recent_cpu ser um float
+    cur->recent_cpu = (2*load_avg)/(2*load_avg + 1) 
+                        * cur->recent_cpu 
+                        + cur->nice; 
+    
+  }
+
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer

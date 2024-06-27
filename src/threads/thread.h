@@ -103,6 +103,11 @@ struct thread
 
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
+
+    /// coisas a mais
+    int nice; /* A legalidade de uma thread com outras. */
+    //sim, eh um numero real
+    float recent_cpu; /* Medir o quanto de tempo da CPU recebeu recentemente. */
   };
 
 //==============================================================================================================
@@ -111,6 +116,10 @@ struct thread
    If true, use multi-level feedback queue scheduler.
    Controlled by kernel command-line option "-o mlfqs". */
 extern bool thread_mlfqs;
+
+/* System-wide segundo o documento do site*/ 
+extern float load_avg; //eh um numero real
+extern int ready_threads; 
 
 void thread_init (void);
 void thread_start (void);
