@@ -63,8 +63,19 @@ static unsigned thread_ticks;   /* # of timer ticks since last yield. */
    Controlled by kernel command-line option "-o mlfqs". */
 bool thread_mlfqs;
 
+//função do float
+int mypow(int p){
+  int result=1;
+  int base =2;
+  for (int i=0; i< p; i++){
+    result *= base;
+  }
+  return result;
+}
+
+
 /* System-wide segundo o documento do site*/
-float load_avg; //eh um numero real
+float_type load_avg; //eh um numero real
 int ready_threads; //não sei onde calcula isso aqui
 
 static void kernel_thread (thread_func *, void *aux);
@@ -141,7 +152,7 @@ thread_tick (void)
   /* Update statistics. */
   if (t == idle_thread){
     idle_ticks++;
-    // __addsf3(t->recent_cpu, 1);
+    // FLOAT_ADD_MIX(t->recent_cpu, 1);
   }
 #ifdef USERPROG
   else if (t->pagedir != NULL)
@@ -149,12 +160,12 @@ thread_tick (void)
 #endif
   else{
     kernel_ticks++;
-    __addsf3(t->recent_cpu, 1); //testando
+    FLOAT_ADD_MIX(t->recent_cpu, 1); //testando
   }
   /* Enforce preemption. */
   if (++thread_ticks >= TIME_SLICE){
     intr_yield_on_return ();
-    // __addsf3(t->recent_cpu, 1);
+    // FLOAT_ADD_MIX(t->recent_cpu, 1);
   }
 }
 
@@ -392,7 +403,7 @@ thread_set_nice (int nice)
 
   //recalculando a prioridade 
   //ver se precisa mudar algo aqui por causa de recent_cpu ser um float
-  cur->priority = PRI_MAX - __mulsf3(cur->recent_cpu,(1/4)) - (cur->nice*2); 
+  cur->priority = PRI_MAX - FLOAT_DIV_MIX(cur->recent_cpu,4) - (cur->nice*2); 
   
   /* TEXTO TIRADO DAQUELE SITE DA STANFORD
     Sets the current thread's nice value to new_nice 
@@ -414,21 +425,19 @@ thread_get_nice (void)
 //==============================================================================================================
 
 /* Returns 100 times the system load average. */
-int //float??
+float_type 
 thread_get_load_avg (void) 
 {
   /* mandando 100 * load_avd do system-wide */
-  //ver se precisa mudar algo aqui por causa de load_avg ser um float
-  return 100 * load_avg; 
+  return FLOAT_MULT_MIX(100, load_avg); 
 }
 
 /* Returns 100 times the current thread's recent_cpu value. */
-int
+float_type
 thread_get_recent_cpu (void) 
 {
   /* mandando 100*recent_cpu da thread atual */
-  //ver se precisa mudar algo aqui por causa de recent_cpu ser um float
-  return 100 * thread_current()->recent_cpu;
+  return FLOAT_MULT_MIX(100, thread_current()->recent_cpu);
 }
 
 
