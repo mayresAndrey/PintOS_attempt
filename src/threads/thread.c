@@ -246,6 +246,52 @@ thread_create (const char *name, int priority,
 
 //==============================================================================================================
 
+/* */
+
+void 
+thread_sleep(int64_t ticks) {
+  struct thread *cur = thread_current();
+
+  ASSERT(cur != idle_thread);
+
+  cur->wakeup_time = ticks;
+  enum intr_level old_level = intr_disable();
+  list_insert_ordered(&sleep_list, &cur->elem, compare_wakeup_time, NULL);
+  thread_block();
+  intr_set_level(old_level);
+
+  schedule();
+}
+
+//provavelmente pronta  
+/* coloca a thread na lista ready e muda o status*/
+void wakeup(struct thread *t){
+  enum intr_level old_level = intr_disable();
+  list_push_back(&ready_list, &t->elem);
+  thread_unblock(t);
+  intr_set_level(old_level);
+}
+
+//provavelmente pronta
+void
+thread_wakeup(void) {
+  /*
+  Tem cada tick, verifica na lista_sleep se tem alguma thread que precisa ser acordada
+  */
+  struct list_elem *l;
+  struct thread *t;
+  int64_t ticks = timer_ticks();
+  for(l = list_begin(&sleep_list); l != list_end(&sleep_list); l = list_next(l)){
+    t = list_entry(l, struct thread, elem);
+    if(t->wakeup_time <= ticks){
+      list_remove(l); 
+      wakeup(t);
+    }
+  }
+}
+
+//==============================================================================================================
+
 /* Puts the current thread to sleep.  It will not be scheduled
    again until awoken by thread_unblock().
 
@@ -259,7 +305,6 @@ thread_block (void)
   ASSERT (intr_get_level () == INTR_OFF);
 
   struct thread* cur = thread_current();
-  //list_push_back(&sleep_list, &cur->elem);
   cur->status = THREAD_BLOCKED;
 
   schedule();

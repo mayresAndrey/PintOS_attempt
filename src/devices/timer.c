@@ -93,14 +93,7 @@ timer_sleep (int64_t _ticks)
 
   ASSERT (intr_get_level () == INTR_ON); 
   if(timer_elapsed(start) < _ticks){
-    //talvez colocar essa parte dentro do thread_yield (?)
-    struct thread *cur = thread_current();
-    cur->wakeup_time = start + _ticks; 
-    list_insert_ordered(&sleep_list, &cur->elem, (list_less_func*) &compare_wakeup_time, (void*) cur->wakeup_time);
-    thread_block();
-  }
-  while (timer_elapsed (start) < _ticks) {
-    thread_yield (); 
+    thread_sleep(_ticks + start);
   }
 }
 //====================================================================
@@ -196,9 +189,9 @@ timer_interrupt (struct intr_frame *args UNUSED)
     cur->recent_cpu = (2*load_avg)/(2*load_avg + 1) 
                         * cur->recent_cpu 
                         + cur->nice; 
-    
   }
-
+  
+  thread_wakeup();
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer

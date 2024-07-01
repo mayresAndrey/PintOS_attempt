@@ -148,6 +148,8 @@ extern int ready_threads;
 //para o timer_sleep
 extern struct list sleep_list;
 bool compare_wakeup_time(const struct list_elem *a, const struct list_elem *b, void *aux);
+void thread_sleep(int64_t ticks);
+void thread_wakeup(void);
 
 void thread_init (void);
 void thread_start (void);
