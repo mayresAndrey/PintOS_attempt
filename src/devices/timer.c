@@ -92,12 +92,9 @@ timer_sleep (int64_t _ticks)
   int64_t start = timer_ticks ();
 
   ASSERT (intr_get_level () == INTR_ON);
-  
-  // if(timer_elapsed (start) < _ticks) 
-  //   timer_ticks() % TIMER_FREQ;
-  // else if
-  while(timer_elapsed (start) < _ticks) 
-    thread_yield (); 
+  if(timer_elapsed(start) < _ticks){
+    thread_sleep(_ticks + start);
+  }
 }
 //====================================================================
 
@@ -192,9 +189,9 @@ timer_interrupt (struct intr_frame *args UNUSED)
     cur->recent_cpu = (2*load_avg)/(2*load_avg + 1) 
                         * cur->recent_cpu 
                         + cur->nice; 
-    
   }
-
+  
+  thread_wakeup();
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer
