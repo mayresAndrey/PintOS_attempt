@@ -67,7 +67,7 @@ bool thread_mlfqs;
 int mypow(int p){
   int result=1;
   int base =2;
-  for (int i=0; i< p; i++){
+  for (int i=0; i < p; i++){
     result *= base;
   }
   return result;
@@ -352,7 +352,7 @@ thread_yield (void)
   if (cur != idle_thread) 
     list_push_back (&ready_list, &cur->elem); 
   //estava THREAD_READY 
-  cur->status = THREAD_BLOCKED; 
+  cur->status = THREAD_READY; 
   schedule ();
   intr_set_level (old_level);
 }

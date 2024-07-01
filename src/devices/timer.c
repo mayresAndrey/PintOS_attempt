@@ -87,12 +87,16 @@ timer_elapsed (int64_t then)
 /* Sleeps for approximately TICKS timer ticks.  Interrupts must
    be turned on. */
 void
-timer_sleep (int64_t ticks) 
+timer_sleep (int64_t _ticks) 
 {
   int64_t start = timer_ticks ();
 
   ASSERT (intr_get_level () == INTR_ON);
-  while (timer_elapsed (start) < ticks) 
+  
+  // if(timer_elapsed (start) < _ticks) 
+  //   timer_ticks() % TIMER_FREQ;
+  // else if
+  while(timer_elapsed (start) < _ticks) 
     thread_yield (); 
 }
 //====================================================================
