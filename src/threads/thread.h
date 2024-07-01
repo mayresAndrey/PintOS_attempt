@@ -145,8 +145,7 @@ extern bool thread_mlfqs;
 extern float_type load_avg; //eh um numero real
 extern int ready_threads; 
 
-//para o timer_sleep
-extern struct list sleep_list;
+//para o timer_sleep 
 bool compare_wakeup_time(const struct list_elem *a, const struct list_elem *b, void *aux);
 void thread_sleep(int64_t ticks);
 void thread_wakeup(void);

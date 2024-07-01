@@ -1,4 +1,4 @@
-qemu-system-i386 -device isa-debug-exit -drive file=/tmp/6eqZlxkM4M.dsk,format=raw,index=0,media=disk -m 4 -net none -nographic -monitor null
+qemu-system-i386 -device isa-debug-exit -drive file=/tmp/um677h0ot2.dsk,format=raw,index=0,media=disk -m 4 -net none -nographic -monitor null
 c[?7l[2J[0mSeaBIOS (version 1.15.0-1)
 Booting from Hard Disk...
 PPiiLLoo  hhddaa1
@@ -8,32 +8,20 @@ Kernel command line: -q run alarm-simultaneous
 Pintos booting with 3,968 kB RAM...
 367 pages available in kernel pool.
 367 pages available in user pool.
-Calibrating timer...  557,875,200 loops/s.
+Calibrating timer...  996,147,200 loops/s.
 Boot complete.
 Executing 'alarm-simultaneous':
 (alarm-simultaneous) begin
 (alarm-simultaneous) Creating 3 threads to sleep 5 times each.
 (alarm-simultaneous) Each thread sleeps 10 ticks each time.
 (alarm-simultaneous) Within an iteration, all threads should wake up on the same tick.
-(alarm-simultaneous) iteration 0, thread 0: woke up after 10 ticks
-(alarm-simultaneous) iteration 0, thread 1: woke up 0 ticks later
-(alarm-simultaneous) iteration 0, thread 2: woke up 0 ticks later
-(alarm-simultaneous) iteration 1, thread 0: woke up 10 ticks later
-(alarm-simultaneous) iteration 1, thread 1: woke up 0 ticks later
-(alarm-simultaneous) iteration 1, thread 2: woke up 0 ticks later
-(alarm-simultaneous) iteration 2, thread 0: woke up 10 ticks later
-(alarm-simultaneous) iteration 2, thread 1: woke up 0 ticks later
-(alarm-simultaneous) iteration 2, thread 2: woke up 0 ticks later
-(alarm-simultaneous) iteration 3, thread 0: woke up 10 ticks later
-(alarm-simultaneous) iteration 3, thread 1: woke up 0 ticks later
-(alarm-simultaneous) iteration 3, thread 2: woke up 0 ticks later
-(alarm-simultaneous) iteration 4, thread 0: woke up 10 ticks later
-(alarm-simultaneous) iteration 4, thread 1: woke up 0 ticks later
-(alarm-simultaneous) iteration 4, thread 2: woke up 0 ticks later
-(alarm-simultaneous) end
-Execution of 'alarm-simultaneous' complete.
-Timer: 280 ticks
-Thread: 0 idle ticks, 280 kernel ticks, 0 user ticks
-Console: 1614 characters output
+Kernel PANIC at ../../threads/thread.c:393 in thread_exit(): executed an unreachable statement
+Call stack: 0xc0029bd7.
+The `backtrace' program can make call stacks useful.
+Read "Backtraces" in the "Debugging Tools" chapter
+of the Pintos documentation for more information.
+Timer: 32 ticks
+Thread: 1 idle ticks, 31 kernel ticks, 0 user ticks
+Console: 821 characters output
 Keyboard: 0 keys pressed
 Powering off...

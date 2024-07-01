@@ -1,24 +1,23 @@
-qemu-system-i386 -device isa-debug-exit -drive file=/tmp/0m6DZCNffW.dsk,format=raw,index=0,media=disk -m 4 -net none -nographic -monitor null
+qemu-system-i386 -device isa-debug-exit -drive file=/tmp/C3mp7AuxeF.dsk,format=raw,index=0,media=disk -m 4 -net none -nographic -monitor null
 c[?7l[2J[0mSeaBIOS (version 1.15.0-1)
 Booting from Hard Disk...
 PPiiLLoo  hhddaa1
 1
 LLooaaddiinngg.......................
-.
 Kernel command line: -q run priority-condvar
 Pintos booting with 3,968 kB RAM...
 367 pages available in kernel pool.
 367 pages available in user pool.
-Calibrating timer...  603,750,400 loops/s.
+Calibrating timer...  1,020,723,200 loops/s.
 Boot complete.
 Executing 'priority-condvar':
 Kernel PANIC at ../../tests/threads/tests.c:62 in run_test(): no test named "priority-condvar"
-Call stack: 0xc0029a37.
+Call stack: 0xc0029bd7.
 The `backtrace' program can make call stacks useful.
 Read "Backtraces" in the "Debugging Tools" chapter
 of the Pintos documentation for more information.
-Timer: 29 ticks
-Thread: 0 idle ticks, 29 kernel ticks, 0 user ticks
-Console: 580 characters output
+Timer: 27 ticks
+Thread: 0 idle ticks, 27 kernel ticks, 0 user ticks
+Console: 582 characters output
 Keyboard: 0 keys pressed
 Powering off...

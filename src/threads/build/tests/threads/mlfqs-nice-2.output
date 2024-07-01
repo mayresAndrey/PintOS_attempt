@@ -1,4 +1,4 @@
-qemu-system-i386 -device isa-debug-exit -drive file=/tmp/kdXCgfjgZU.dsk,format=raw,index=0,media=disk -m 4 -net none -nographic -monitor null
+qemu-system-i386 -device isa-debug-exit -drive file=/tmp/76uAPT3YBW.dsk,format=raw,index=0,media=disk -m 4 -net none -nographic -monitor null
 c[?7l[2J[0mSeaBIOS (version 1.15.0-1)
 Booting from Hard Disk...
 PPiiLLoo  hhddaa1
@@ -8,19 +8,20 @@ Kernel command line: -q -mlfqs run mlfqs-nice-2
 Pintos booting with 3,968 kB RAM...
 367 pages available in kernel pool.
 367 pages available in user pool.
-Calibrating timer...  602,112,000 loops/s.
+Calibrating timer...  1,038,745,600 loops/s.
 Boot complete.
 Executing 'mlfqs-nice-2':
 (mlfqs-nice-2) begin
 (mlfqs-nice-2) Starting 2 threads...
 (mlfqs-nice-2) Starting threads took 0 ticks.
 (mlfqs-nice-2) Sleeping 40 seconds to let threads run, please wait...
-(mlfqs-nice-2) Thread 0 received 1501 ticks.
-(mlfqs-nice-2) Thread 1 received 1501 ticks.
-(mlfqs-nice-2) end
-Execution of 'mlfqs-nice-2' complete.
-Timer: 4026 ticks
-Thread: 0 idle ticks, 4026 kernel ticks, 0 user ticks
-Console: 631 characters output
+Kernel PANIC at ../../threads/thread.c:393 in thread_exit(): executed an unreachable statement
+Call stack: 0xc0029bd7.
+The `backtrace' program can make call stacks useful.
+Read "Backtraces" in the "Debugging Tools" chapter
+of the Pintos documentation for more information.
+Timer: 3528 ticks
+Thread: 500 idle ticks, 3028 kernel ticks, 0 user ticks
+Console: 761 characters output
 Keyboard: 0 keys pressed
 Powering off...

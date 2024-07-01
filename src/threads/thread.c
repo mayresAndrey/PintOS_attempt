@@ -81,6 +81,8 @@ bool compare_wakeup_time(const struct list_elem *a, const struct list_elem *b, v
   return ta->wakeup_time < tb->wakeup_time;
 }
 
+//cabeça
+void wakeup(struct thread *t);
 
 /* System-wide segundo o documento do site*/
 float_type load_avg; //eh um numero real
@@ -246,7 +248,7 @@ thread_create (const char *name, int priority,
 
 //==============================================================================================================
 
-/* */
+/* */ 
 
 void 
 thread_sleep(int64_t ticks) {
@@ -255,21 +257,20 @@ thread_sleep(int64_t ticks) {
   ASSERT(cur != idle_thread);
 
   cur->wakeup_time = ticks;
-  enum intr_level old_level = intr_disable();
+  enum intr_level old_level = intr_disable(); 
   list_insert_ordered(&sleep_list, &cur->elem, compare_wakeup_time, NULL);
-  thread_block();
+  //o que a thread_block faz
+  cur->status = THREAD_BLOCKED;
+  schedule();
   intr_set_level(old_level);
 
-  schedule();
 }
 
 //provavelmente pronta  
 /* coloca a thread na lista ready e muda o status*/
 void wakeup(struct thread *t){
-  enum intr_level old_level = intr_disable();
   list_push_back(&ready_list, &t->elem);
-  thread_unblock(t);
-  intr_set_level(old_level);
+  thread_unblock(t); 
 }
 
 //provavelmente pronta
@@ -281,13 +282,16 @@ thread_wakeup(void) {
   struct list_elem *l;
   struct thread *t;
   int64_t ticks = timer_ticks();
+  enum intr_level old_level = intr_disable();
   for(l = list_begin(&sleep_list); l != list_end(&sleep_list); l = list_next(l)){
     t = list_entry(l, struct thread, elem);
-    if(t->wakeup_time <= ticks){
+    if(t->wakeup_time == ticks){ 
       list_remove(l); 
-      wakeup(t);
+      wakeup(t); 
+      break; 
     }
   }
+  intr_set_level(old_level);
 }
 
 //==============================================================================================================
@@ -701,6 +705,7 @@ schedule (void)
    * tem de verificar se uma thread esta bloqueada, alem de implementar 
    * o unblock com o tempo
    * */
+
   ASSERT (cur->status != THREAD_RUNNING);
   ASSERT (is_thread (next));
 

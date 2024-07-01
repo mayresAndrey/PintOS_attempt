@@ -1,4 +1,4 @@
-qemu-system-i386 -device isa-debug-exit -drive file=/tmp/q2gtHC0PNZ.dsk,format=raw,index=0,media=disk -m 4 -net none -nographic -monitor null
+qemu-system-i386 -device isa-debug-exit -drive file=/tmp/e75apFJYCg.dsk,format=raw,index=0,media=disk -m 4 -net none -nographic -monitor null
 c[?7l[2J[0mSeaBIOS (version 1.15.0-1)
 Booting from Hard Disk...
 PPiiLLoo  hhddaa1
@@ -8,7 +8,7 @@ Kernel command line: -q -mlfqs run mlfqs-recent-1
 Pintos booting with 3,968 kB RAM...
 367 pages available in kernel pool.
 367 pages available in user pool.
-Calibrating timer...  549,683,200 loops/s.
+Calibrating timer...  1,068,236,800 loops/s.
 Boot complete.
 Executing 'mlfqs-recent-1':
 (mlfqs-recent-1) begin
@@ -106,7 +106,7 @@ Executing 'mlfqs-recent-1':
 (mlfqs-recent-1) end
 Execution of 'mlfqs-recent-1' complete.
 Timer: 19001 ticks
-Thread: 0 idle ticks, 19001 kernel ticks, 0 user ticks
-Console: 7089 characters output
+Thread: 970 idle ticks, 18031 kernel ticks, 0 user ticks
+Console: 7093 characters output
 Keyboard: 0 keys pressed
 Powering off...
