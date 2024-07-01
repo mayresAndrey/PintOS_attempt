@@ -26,7 +26,7 @@
 static struct list ready_list;
 
 /*Lista de processos no estado de THREAD_BLOCKED*/
-static struct list blocked_list;
+static struct list sleep_list;
 
 /* List of all processes.  Processes are added to this list
    when they are first scheduled and removed when they exit. */
@@ -73,6 +73,14 @@ int mypow(int p){
   return result;
 }
 
+//função para a comparação do timer_sleep
+bool compare_wakeup_time(const struct list_elem *a, const struct list_elem *b, void *aux) {
+  struct thread *ta = list_entry (a, struct thread, elem);
+  struct thread *tb = list_entry (b, struct thread, elem);
+
+  return ta->wakeup_time < tb->wakeup_time;
+}
+
 
 /* System-wide segundo o documento do site*/
 float_type load_avg; //eh um numero real
@@ -110,7 +118,7 @@ thread_init (void)
 
   lock_init (&tid_lock);
   list_init (&ready_list);
-  list_init (&blocked_list);
+  list_init (&sleep_list);
   list_init (&all_list);
 
   /* Set up a thread structure for the running thread. */
@@ -251,7 +259,7 @@ thread_block (void)
   ASSERT (intr_get_level () == INTR_OFF);
 
   struct thread* cur = thread_current();
-  // list_push_back(&blocked_list, &cur->elem);
+  //list_push_back(&sleep_list, &cur->elem);
   cur->status = THREAD_BLOCKED;
 
   schedule();
@@ -276,6 +284,7 @@ thread_unblock (struct thread *t)
   ASSERT (t->status == THREAD_BLOCKED);
   list_push_back (&ready_list, &t->elem); 
   t->status = THREAD_READY; 
+  
   intr_set_level (old_level);
 }
 
@@ -351,8 +360,7 @@ thread_yield (void)
   old_level = intr_disable ();
   if (cur != idle_thread) 
     list_push_back (&ready_list, &cur->elem); 
-  //estava THREAD_READY 
-  cur->status = THREAD_BLOCKED; 
+  cur->status = THREAD_READY; 
   schedule ();
   intr_set_level (old_level);
 }

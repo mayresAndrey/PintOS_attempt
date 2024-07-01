@@ -128,6 +128,7 @@ struct thread
     unsigned magic;                     /* Detects stack overflow. */
 
     /// coisas a mais
+    int wakeup_time; /* Tempo que a thread precisa acordar. */
     int nice; /* A legalidade de uma thread com outras. */
     //sim, eh um numero real
     float_type recent_cpu; /* Medir o quanto de tempo da CPU recebeu recentemente. */
@@ -143,6 +144,10 @@ extern bool thread_mlfqs;
 /* System-wide segundo o documento do site*/ 
 extern float_type load_avg; //eh um numero real
 extern int ready_threads; 
+
+//para o timer_sleep
+extern struct list sleep_list;
+bool compare_wakeup_time(const struct list_elem *a, const struct list_elem *b, void *aux);
 
 void thread_init (void);
 void thread_start (void);
