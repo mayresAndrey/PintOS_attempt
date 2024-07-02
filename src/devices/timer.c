@@ -88,7 +88,7 @@ timer_elapsed (int64_t then)
    be turned on. */
 void
 timer_sleep (int64_t _ticks) 
-{
+{ 
   int64_t start = timer_ticks ();
 
   ASSERT (intr_get_level () == INTR_ON);

@@ -1,4 +1,1 @@
-FAIL
-Kernel panic in run: PANIC at ../../threads/thread.c:393 in thread_exit(): executed an unreachable statement
-Call stack: 0xc0029bd7
-Translation of call stack:
+PASS

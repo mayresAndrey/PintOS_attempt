@@ -1,4 +1,0 @@
-FAIL
-Kernel panic in run: PANIC at ../../tests/threads/tests.c:95 in fail(): test failed
-Call stack: 0xc0029bd7
-Translation of call stack:
