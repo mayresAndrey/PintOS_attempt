@@ -26,6 +26,29 @@ typedef int tid_t;
 
 
 //==============================================================================================================
+//IMPLEMENTAÇÃO DO FLOAT 
+
+#define FLOAT_SHIFT_AMOUNT 17
+#define F mypow(14)
+#define Q 14
+
+int mypow(int p);
+typedef int float_type;
+
+#define FLOAT_CONST(A) ((float_type)(A * F))
+#define FLOAT_ADD(A,B) (A + B)
+#define FLOAT_ADD_MIX(A,B) (A + (B * F))
+#define FLOAT_SUB(A,B) (A - B)
+#define FLOAT_SUB_MIX(A,B) (A - (B * F))
+#define FLOAT_MULT_MIX(A,B) (A * B) 
+#define FLOAT_DIV_MIX(A,B) (A / B)
+#define FLOAT_MULT(A,B) ((float_type) (((int64_t) A) * B/ F)) 
+#define FLOAT_DIV(A,B) ((float_type)((((int64_t) A) * F) / B))
+#define FLOAT_INT_PART(A) (A >> FLOAT_SHIFT_AMOUNT)
+#define FLOAT_ROUND(A) (A >= 0 ? ((A +(1 * mypow(Q - 1))) / F ) : ((A - (1 * mypow(Q - 1))) / F))
+
+//==============================================================================================================
+
 
 /* A kernel thread or user process.
 
@@ -103,6 +126,12 @@ struct thread
 
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
+
+    /// coisas a mais
+    int wakeup_time; /* Tempo que a thread precisa acordar. */
+    int nice; /* A legalidade de uma thread com outras. */
+    //sim, eh um numero real
+    float_type recent_cpu; /* Medir o quanto de tempo da CPU recebeu recentemente. */
   };
 
 //==============================================================================================================
@@ -111,6 +140,15 @@ struct thread
    If true, use multi-level feedback queue scheduler.
    Controlled by kernel command-line option "-o mlfqs". */
 extern bool thread_mlfqs;
+
+/* System-wide segundo o documento do site*/ 
+extern float_type load_avg; //eh um numero real
+extern int ready_threads; 
+
+//para o timer_sleep 
+bool compare_wakeup_time(const struct list_elem *a, const struct list_elem *b, void *aux);
+void thread_sleep(int64_t ticks);
+void thread_wakeup(void);
 
 void thread_init (void);
 void thread_start (void);

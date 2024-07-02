@@ -26,7 +26,7 @@
 static struct list ready_list;
 
 /*Lista de processos no estado de THREAD_BLOCKED*/
-static struct list blocked_list;
+static struct list sleep_list;
 
 /* List of all processes.  Processes are added to this list
    when they are first scheduled and removed when they exit. */
@@ -63,6 +63,30 @@ static unsigned thread_ticks;   /* # of timer ticks since last yield. */
    Controlled by kernel command-line option "-o mlfqs". */
 bool thread_mlfqs;
 
+//função do float
+int mypow(int p){
+  int result=1;
+  int base =2;
+  for (int i=0; i < p; i++){
+    result *= base;
+  }
+  return result;
+}
+
+//função para a comparação do timer_sleep
+bool compare_wakeup_time(const struct list_elem *a, const struct list_elem *b, void *aux UNUSED) {
+  struct thread *ta = list_entry (a, struct thread, elem);
+  struct thread *tb = list_entry (b, struct thread, elem);
+
+  return ta->wakeup_time < tb->wakeup_time;
+}
+
+void wakeup(struct thread *t);
+
+/* System-wide segundo o documento do site*/
+float_type load_avg; //eh um numero real
+int ready_threads; //não sei onde calcula isso aqui
+
 static void kernel_thread (thread_func *, void *aux);
 
 static void idle (void *aux UNUSED);
@@ -95,7 +119,7 @@ thread_init (void)
 
   lock_init (&tid_lock);
   list_init (&ready_list);
-  list_init (&blocked_list);
+  list_init (&sleep_list);
   list_init (&all_list);
 
   /* Set up a thread structure for the running thread. */
@@ -123,7 +147,10 @@ thread_start (void)
 }
 
 //==============================================================================================================
-
+/*NAO SEI EXATAMENTE ONDE COLOCA O recent_cpu
+  Each time a timer interrupt occurs, recent_cpu 
+  is incremented by 1 for the running thread only, 
+  unless the idle thread is running.*/
 /* Called by the timer interrupt handler at each timer tick.
    Thus, this function runs in an external interrupt context. */
 void
@@ -132,18 +159,23 @@ thread_tick (void)
   struct thread *t = thread_current ();
 
   /* Update statistics. */
-  if (t == idle_thread)
+  if (t == idle_thread){
     idle_ticks++;
+    // FLOAT_ADD_MIX(t->recent_cpu, 1);
+  }
 #ifdef USERPROG
   else if (t->pagedir != NULL)
     user_ticks++;
 #endif
-  else
+  else{
     kernel_ticks++;
-
+    FLOAT_ADD_MIX(t->recent_cpu, 1); //testando
+  }
   /* Enforce preemption. */
-  if (++thread_ticks >= TIME_SLICE)
+  if (++thread_ticks >= TIME_SLICE){
     intr_yield_on_return ();
+    // FLOAT_ADD_MIX(t->recent_cpu, 1);
+  }
 }
 
 /* Prints thread statistics. */
@@ -215,6 +247,59 @@ thread_create (const char *name, int priority,
 
 //==============================================================================================================
 
+/* */ 
+void 
+thread_sleep(int64_t ticks) {
+  struct thread *cur = thread_current();
+
+  enum intr_level old_level;
+
+  ASSERT (!intr_context ());
+
+  old_level = intr_disable();  
+  
+  if(cur != idle_thread){
+    cur->wakeup_time = ticks;
+    list_insert_ordered(&sleep_list, &cur->elem, compare_wakeup_time, NULL);
+  }
+  cur->status = THREAD_BLOCKED;
+  schedule();
+
+  intr_set_level(old_level);
+}
+
+
+//provavelmente pronta
+/*
+  Tem cada tick, verifica na lista_sleep se tem alguma thread que precisa ser acordada
+*/
+void
+thread_wakeup(void) {
+  struct list_elem *l;
+  struct thread *t;
+  int64_t ticks = timer_ticks();
+
+
+  enum intr_level old_level = intr_disable();
+
+  for(l = list_begin(&sleep_list); l != list_end(&sleep_list); ){
+    t = list_entry(l, struct thread, elem); 
+    
+    if(t->wakeup_time > ticks){ 
+      break;
+    } 
+    
+    l = list_remove(l); 
+    t->status = THREAD_READY;
+    list_push_back(&ready_list, &t->elem);
+
+  }
+
+  intr_set_level(old_level);
+}
+
+//==============================================================================================================
+
 /* Puts the current thread to sleep.  It will not be scheduled
    again until awoken by thread_unblock().
 
@@ -228,7 +313,6 @@ thread_block (void)
   ASSERT (intr_get_level () == INTR_OFF);
 
   struct thread* cur = thread_current();
-  // list_push_back(&blocked_list, &cur->elem);
   cur->status = THREAD_BLOCKED;
 
   schedule();
@@ -241,7 +325,7 @@ thread_block (void)
    This function does not preempt the running thread.  This can
    be important: if the caller had disabled interrupts itself,
    it may expect that it can atomically unblock a thread and
-   update other data. */
+   update other data. */ 
 void
 thread_unblock (struct thread *t) 
 {
@@ -253,6 +337,7 @@ thread_unblock (struct thread *t)
   ASSERT (t->status == THREAD_BLOCKED);
   list_push_back (&ready_list, &t->elem); 
   t->status = THREAD_READY; 
+  
   intr_set_level (old_level);
 }
 
@@ -327,9 +412,8 @@ thread_yield (void)
 
   old_level = intr_disable ();
   if (cur != idle_thread) 
-    list_push_back (&ready_list, &cur->elem); 
-  //estava THREAD_READY 
-  cur->status = THREAD_BLOCKED; 
+    list_push_back (&ready_list, &cur->elem);   
+  cur->status = THREAD_READY; 
   schedule ();
   intr_set_level (old_level);
 }
@@ -373,37 +457,50 @@ thread_get_priority (void)
 
 /* Sets the current thread's nice value to NICE. */
 void
-thread_set_nice (int nice UNUSED) 
+thread_set_nice (int nice) 
 {
-  /* Not yet implemented. */
+  struct thread *cur = thread_current(); 
+  cur->nice = nice; 
+
+  //recalculando a prioridade 
+  //ver se precisa mudar algo aqui por causa de recent_cpu ser um float
+  cur->priority = PRI_MAX - FLOAT_DIV_MIX(cur->recent_cpu,4) - (cur->nice*2); 
+  
+  /* TEXTO TIRADO DAQUELE SITE DA STANFORD
+    Sets the current thread's nice value to new_nice 
+    and recalculates the thread's priority based on 
+    the new value (see section B.2 Calculating Priority). 
+    If the running thread no longer has the highest priority, yields.*/
+  
+  //a thread vai parar caso nao estiver na mais alta prioridade
 }
 
 /* Returns the current thread's nice value. */
 int
 thread_get_nice (void) 
 {
-  /* Not yet implemented. */
-  return 0;
+  //mandando o nice
+  return thread_current()->nice;
 }
 
 //==============================================================================================================
 
 /* Returns 100 times the system load average. */
-int
+float_type 
 thread_get_load_avg (void) 
 {
-  /* Not yet implemented. */
-  return 0;
+  /* mandando 100 * load_avd do system-wide */
+  return FLOAT_MULT_MIX(100, load_avg); 
 }
 
 /* Returns 100 times the current thread's recent_cpu value. */
-int
+float_type
 thread_get_recent_cpu (void) 
 {
-  /* Not yet implemented. */
-  return 0;
+  /* mandando 100*recent_cpu da thread atual */
+  return FLOAT_MULT_MIX(100, thread_current()->recent_cpu);
 }
-
+
 
 //==============================================================================================================
 
@@ -457,7 +554,6 @@ kernel_thread (thread_func *function, void *aux)
   function (aux);       /* Execute the thread function. */
   thread_exit ();       /* If function() returns, kill the thread. */
 }
-
 
 //==============================================================================================================
 
@@ -499,8 +595,13 @@ init_thread (struct thread *t, const char *name, int priority)
   t->status = THREAD_BLOCKED;
   strlcpy (t->name, name, sizeof t->name);
   t->stack = (uint8_t *) t + PGSIZE;
-  t->priority = priority;
   t->magic = THREAD_MAGIC;
+
+  t->nice = 0; /* Sempre começa como '0'. */
+  t->recent_cpu = 0; /* Também sempre começa com '0'. */
+
+  t->priority = priority; /*  Talvez mudar isso. obs.: tem que 
+                              depender do nice e do recent_cpu. */
 
   old_level = intr_disable ();
   list_push_back (&all_list, &t->allelem);
@@ -608,6 +709,7 @@ schedule (void)
    * tem de verificar se uma thread esta bloqueada, alem de implementar 
    * o unblock com o tempo
    * */
+
   ASSERT (cur->status != THREAD_RUNNING);
   ASSERT (is_thread (next));
 
