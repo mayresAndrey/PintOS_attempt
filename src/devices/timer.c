@@ -90,11 +90,15 @@ void
 timer_sleep (int64_t _ticks) 
 { 
   int64_t start = timer_ticks ();
-
   ASSERT (intr_get_level () == INTR_ON);
+
+  /*Nosso código começa aqui*/
+  /* Função alterada de while para if, tantando quebrar as condições
+  de espera ocupada. */
   if(timer_elapsed(start) < _ticks){
     thread_sleep(_ticks + start);
   }
+  /*Nosso código termina aqui*/
 }
 //====================================================================
 
@@ -175,8 +179,9 @@ timer_interrupt (struct intr_frame *args UNUSED)
   ticks++;
   thread_tick ();
 
-  /*apenas quando essa condição for verdadeira que pode 
-    recalcular o recent_cpu da thread e o load_avg*/
+  /*Nosso código começa aqui*/
+  /* Apenas quando essa condição for verdadeira que pode 
+    recalcular o recent_cpu da thread e o load_avg */
   if(timer_ticks() % TIMER_FREQ == 0){
     //ver em qual dos dois precisa calcular primeiro
 
@@ -192,6 +197,7 @@ timer_interrupt (struct intr_frame *args UNUSED)
   }
   
   thread_wakeup();
+  /*Nosso código termina aqui*/
 }
 
 /* Returns true if LOOPS iterations waits for more than one timer

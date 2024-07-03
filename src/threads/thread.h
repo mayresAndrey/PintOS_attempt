@@ -127,9 +127,10 @@ struct thread
     /* Owned by thread.c. */
     unsigned magic;                     /* Detects stack overflow. */
 
-    /// coisas a mais
+   /*Nosso código começa aqui*/
     int wakeup_time; /* Tempo que a thread precisa acordar. */
     int nice; /* A legalidade de uma thread com outras. */
+    /*Nosso código termina aqui*/
     //sim, eh um numero real
     float_type recent_cpu; /* Medir o quanto de tempo da CPU recebeu recentemente. */
   };
