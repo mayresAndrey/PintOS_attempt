@@ -85,7 +85,7 @@ void wakeup(struct thread *t);
 
 /* System-wide segundo o documento do site*/
 float_type load_avg; //eh um numero real
-int ready_threads; //não sei onde calcula isso aqui
+ //não sei onde calcula isso aqui
 
 static void kernel_thread (thread_func *, void *aux);
 
@@ -134,6 +134,7 @@ thread_init (void)
 void
 thread_start (void) 
 {
+  //Inicializa thread_list como 0 na inicialização
   /* Create the idle thread. */
   struct semaphore idle_started;
   sema_init (&idle_started, 0);
@@ -175,6 +176,20 @@ thread_tick (void)
   if (++thread_ticks >= TIME_SLICE){
     intr_yield_on_return ();
     // FLOAT_ADD_MIX(t->recent_cpu, 1);
+  }
+
+  if(timer_ticks() % 100 == 0){
+    //ver em qual dos dois precisa calcular primeiro
+
+    //atualizar também o load_avg com essa condição
+    //ver se precisa mudar algo aqui por causa de load_avg ser um float
+    float_type _59_60 = FLOAT_DIV(FLOAT_CONST(59), FLOAT_CONST(60));
+    float_type _1_60 = FLOAT_DIV(FLOAT_CONST(1), FLOAT_CONST(60));
+    float_type mult1 = FLOAT_MULT(_59_60,load_avg);
+    float_type mult2 = FLOAT_MULT_MIX(_1_60, thread_get_ready_threads());
+    load_avg = FLOAT_ADD(mult1, mult2);
+    //msg("59/60 = %d", 10*(FLOAT_DIV(FLOAT_CONST(59), FLOAT_CONST(60))));
+    //msg("Load_avg = %d.%02d - %d", load_avg, load_avg %100, thread_get_ready_threads());
   }
 }
 
@@ -307,6 +322,16 @@ thread_wakeup(void) {
   }
 
   intr_set_level(old_level);
+}
+
+int thread_get_ready_threads() {
+  enum intr_level old_level;
+  int ready_threads;
+  ready_threads = list_size(&ready_list);
+  if(thread_current() != idle_thread) ready_threads +=1;
+  intr_set_level(old_level);
+
+  return ready_threads;
 }
 /*Nosso código termina aqui*/
 
@@ -498,19 +523,19 @@ thread_get_nice (void)
 //==============================================================================================================
 
 /* Returns 100 times the system load average. */
-float_type 
+int
 thread_get_load_avg (void) 
 {
   /* mandando 100 * load_avd do system-wide */
-  return FLOAT_MULT_MIX(100, load_avg); 
+  return FLOAT_MULT_MIX(load_avg, 100)/F; 
 }
 
 /* Returns 100 times the current thread's recent_cpu value. */
-float_type
+int
 thread_get_recent_cpu (void) 
 {
   /* mandando 100*recent_cpu da thread atual */
-  return FLOAT_MULT_MIX(100, thread_current()->recent_cpu);
+  return FLOAT_MULT_MIX(thread_current()->recent_cpu, 100)/F;
 }
 
 

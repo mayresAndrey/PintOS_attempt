@@ -178,24 +178,6 @@ timer_interrupt (struct intr_frame *args UNUSED)
 {
   ticks++;
   thread_tick ();
-
-  /*Nosso código começa aqui*/
-  /* Apenas quando essa condição for verdadeira que pode 
-    recalcular o recent_cpu da thread e o load_avg */
-  if(timer_ticks() % TIMER_FREQ == 0){
-    //ver em qual dos dois precisa calcular primeiro
-
-    //atualizar também o load_avg com essa condição
-    //ver se precisa mudar algo aqui por causa de load_avg ser um float
-    load_avg = (59/60)*load_avg + (1/60)*ready_threads; 
-    
-    struct thread *cur = thread_current();
-    //ver se precisa mudar algo aqui por causa de recent_cpu ser um float
-    cur->recent_cpu = (2*load_avg)/(2*load_avg + 1) 
-                        * cur->recent_cpu 
-                        + cur->nice; 
-  }
-  
   thread_wakeup();
   /*Nosso código termina aqui*/
 }
