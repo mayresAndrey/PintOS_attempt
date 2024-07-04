@@ -246,42 +246,54 @@ thread_create (const char *name, int priority,
 }
 
 //==============================================================================================================
+/*Nosso código começa aqui*/ 
+/* Esse trecho do código foi adicionado afim de lidar
+com a implementação do Alarm Clock aqui no PintOS.*/
 
-/* */ 
+/* Coloca a thread atual em estado de suspensão até que 
+o número especificado de ticks do temporizador tenha passado.*/
 void 
 thread_sleep(int64_t ticks) {
   struct thread *cur = thread_current();
 
+  /* Salva o estado atual das interrupções e desabilita-as para 
+  evitar condições de corrida enquanto manipula a lista de threads adormecidas.*/
   enum intr_level old_level;
-
   ASSERT (!intr_context ());
-
   old_level = intr_disable();  
   
+  /* Verifina se a thread atual não está ociosa, define o tempo de despertar com base
+  no número de ticks(quando chamado pela 1ª vez em Timer.c/timer_sleep() 
+  tick = time_ticks() + alarmTime)e logo após, insere o alarme dentro da lista 
+  que está ordenada de menor para maior com base no tempo de despertar de cada thread. */
   if(cur != idle_thread){
     cur->wakeup_time = ticks;
     list_insert_ordered(&sleep_list, &cur->elem, compare_wakeup_time, NULL);
   }
+
+  /* Muda o status da thread atual para bloqueado e chama a função schedule() para
+  executar a próxima thread pronta. */
   cur->status = THREAD_BLOCKED;
   schedule();
 
   intr_set_level(old_level);
 }
 
-
-//provavelmente pronta
-/*
-  Tem cada tick, verifica na lista_sleep se tem alguma thread que precisa ser acordada
-*/
+/* Verifica a lista de threads adormecidas para acordar aquelas cujo tempo de despertar 
+tenha chegado ou passado.*/
 void
 thread_wakeup(void) {
   struct list_elem *l;
   struct thread *t;
   int64_t ticks = timer_ticks();
 
-
+  //Desabilita Interrupções, prevenindo condições de corrida ao manipular listas globais.
   enum intr_level old_level = intr_disable();
 
+  /* Percorre a lista de threads adormecidas, verifica se o tempo de despetar é maior que
+  o número atual de ticks. Se for, interrompe o loop, afinal, a lista está ordenada e nenhuma
+   thread após ela terá um tempo menor. Caso seja menor, a thread é removida da lista de threads
+   adormecidas e é adicionado a lista de threads prontas. */
   for(l = list_begin(&sleep_list); l != list_end(&sleep_list); ){
     t = list_entry(l, struct thread, elem); 
     
@@ -292,11 +304,11 @@ thread_wakeup(void) {
     l = list_remove(l); 
     t->status = THREAD_READY;
     list_push_back(&ready_list, &t->elem);
-
   }
 
   intr_set_level(old_level);
 }
+/*Nosso código termina aqui*/
 
 //==============================================================================================================
 
