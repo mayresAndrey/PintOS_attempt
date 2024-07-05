@@ -1,6 +1,6 @@
 #ifndef THREADS_THREAD_H
 #define THREADS_THREAD_H
-
+ 
 #include <debug.h>
 #include <list.h>
 #include <stdint.h>
@@ -24,6 +24,7 @@ typedef int tid_t;
 #define PRI_DEFAULT 31                  /* Default priority. */
 #define PRI_MAX 63                      /* Highest priority. */
 
+/* Nosso código começa aqui */
 
 //==============================================================================================================
 //IMPLEMENTAÇÃO DO FLOAT 
@@ -49,6 +50,7 @@ typedef int float_type;
 
 //==============================================================================================================
 
+/* Nosso código termina aqui */
 
 /* A kernel thread or user process.
 
@@ -128,11 +130,12 @@ struct thread
     unsigned magic;                     /* Detects stack overflow. */
 
    /*Nosso código começa aqui*/
+
     int wakeup_time; /* Tempo que a thread precisa acordar. */
     int nice; /* A legalidade de uma thread com outras. */
-    /*Nosso código termina aqui*/
-    //sim, eh um numero real
     float_type recent_cpu; /* Medir o quanto de tempo da CPU recebeu recentemente. */
+
+    /*Nosso código termina aqui*/
   };
 
 //==============================================================================================================
@@ -145,10 +148,16 @@ extern bool thread_mlfqs;
 /* System-wide segundo o documento do site*/ 
 extern float_type load_avg; //eh um numero real
 
+/* Nosso código começa aqui */
+
 //para o timer_sleep 
-bool compare_wakeup_time(const struct list_elem *a, const struct list_elem *b, void *aux);
+bool compare_wakeup_time(const struct list_elem *a, const struct list_elem *b, void *aux UNUSED);
 void thread_sleep(int64_t ticks);
+
+//para o timer_interrupt
 void thread_wakeup(void);
+
+/* Nosso código termina aqui */
 
 void thread_init (void);
 void thread_start (void);
