@@ -2,7 +2,7 @@
 <details>
 <summary>Mudanças no ./src </summary>
 
-- Para facilitar o export no src/utils depois de usar `make` usar `export PATH=$PATH:$(pwd)`, se nao quiser colocar no .bashrc/zshrc
+- Para facilitar o export no src/utils depois de usar `make` usar `export PATH=$PATH:$(pwd)`[até a pasta utils], se nao quiser colocar no .bashrc/zshrc
 Mas no src/threads(adicionado no src/threads/Makefile os comandos para executar o pintos mais facil. com GUI ou sem)
 não precisa nem no `make check` do src/threads/build (se der algum erro oque foi modificado ta no src/tests/Make.tests:58);
 
@@ -134,12 +134,12 @@ não precisa nem no `make check` do src/threads/build (se der algum erro oque fo
    
    | # | Teste | Implementada | Testada | Funcionando |
    |---|-----------|:-----------:|:-------:|:-----------:|
-   | 1  | `alarm-single`|      ❌     |    ❌    |      ❌      |
-   | 2  | `alarm-multiple`|      ❌     |    ❌    |      ❌      |
-   | 3  | `alarm-simultaneous`|      ❌     |    ❌    |      ❌      |
+   | 1  | `alarm-single`|      ✅     |    ✅    |      ✅      |
+   | 2  | `alarm-multiple`|      ✅     |    ✅    |      ✅      |
+   | 3  | `alarm-simultaneous`|      ✅     |    ✅    |      ✅      |
    | 4  | `alarm-priority`*|      ❌     |    ❌    |      ❌      |
-   | 5  | `alarm-zero`|      ❌     |    ❌    |      ❌      |
-   | 6  | `alarm-negative`|      ❌     |    ❌    |      ❌      |
+   | 5  | `alarm-zero`|      ✅     |    ✅    |      ✅      |
+   | 6  | `alarm-negative`|      ✅     |    ✅    |      ✅      |
    | 7  | `priority-change`*|      ❌     |    ❌    |      ❌      |
    | 8  | `priority-donate-one`*|      ❌     |    ❌    |      ❌      |
    | 9  | `priority-donate-multiple`*|      ❌     |    ❌    |      ❌      |
@@ -152,12 +152,12 @@ não precisa nem no `make check` do src/threads/build (se der algum erro oque fo
    | 16 | `priority-sema`*|      ❌     |    ❌    |      ❌      |
    | 17 | `priority-condvar`*|      ❌     |    ❌    |      ❌      |
    | 18 | `priority-donate-chain`*|      ❌     |    ❌    |      ❌      |
-   | 19 | `mlfqs-load-1`|      ❌     |    ❌    |      ❌      |
-   | 20 | `mlfqs-load-60`|      ❌     |    ❌    |      ❌      |
-   | 21 | `mlfqs-load-avg`|      ❌     |    ❌    |      ❌      |
-   | 22 | `mlfqs-recent-1`|      ❌     |    ❌    |      ❌      |
-   | 23 | `mlfqs-fair-2`|      ❌     |    ❌    |      ❌      |
-   | 24 | `mlfqs-fair-20`|      ❌     |    ❌    |      ❌      |
+   | 19 | `mlfqs-load-1`|      ✅     |    ✅    |      ✅      |
+   | 20 | `mlfqs-load-60`|      ✅     |    ✅    |      ❌      |
+   | 21 | `mlfqs-load-avg`|      ✅     |    ✅    |      ❌      |
+   | 22 | `mlfqs-recent-1`|      ✅     |    ✅    |      ✅      |
+   | 23 | `mlfqs-fair-2`|      ✅     |    ✅    |      ✅      |
+   | 24 | `mlfqs-fair-20`|      ✅     |    ✅    |      ✅      |
    | 25 | `mlfqs-nice-2`|      ❌     |    ❌    |      ❌      |
    | 26 | `mlfqs-nice-10`|      ❌     |    ❌    |      ❌      |
    | 27 | `mlfqs-block`|      ❌     |    ❌    |      ❌      |
