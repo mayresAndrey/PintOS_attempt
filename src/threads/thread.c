@@ -63,6 +63,8 @@ static unsigned thread_ticks;   /* # of timer ticks since last yield. */
    Controlled by kernel command-line option "-o mlfqs". */
 bool thread_mlfqs;
 
+/* Nosso código começa aqui */
+
 //função do float
 int mypow(int p){
   int result=1;
@@ -73,6 +75,7 @@ int mypow(int p){
   return result;
 }
 
+//ordenando a ready_list 
 bool compare_priority(const struct list_elem *a, const struct list_elem *b, void *aux UNUSED) {
   struct thread *ta = list_entry (a, struct thread, elem);
   struct thread *tb = list_entry (b, struct thread, elem);
@@ -88,11 +91,38 @@ bool compare_wakeup_time(const struct list_elem *a, const struct list_elem *b, v
   return ta->wakeup_time < tb->wakeup_time;
 }
 
-void wakeup(struct thread *t);
+//compara prioridade do lock
+bool 
+compare_lock_priority(const struct list_elem *a, const struct list_elem *b, void *aux UNUSED){
+  struct lock *_a = list_entry(a, struct lock, elem); 
+  struct lock *_b = list_entry(b, struct lock, elem);
+
+  return _a->max_priority > _b->max_priority;
+}
+
+//update do recent_cpu, por segundo
+void calcula_recent_CPU(struct thread *cur, void *JuliaPagao) {
+  float_type mult1 = FLOAT_MULT(FLOAT_CONST(2), load_avg);
+  float_type mult2 = FLOAT_ADD(mult1, FLOAT_CONST(1));
+  float_type div1 = FLOAT_DIV(mult1, mult2);
+  float_type mult3 = FLOAT_MULT(div1, cur->recent_cpu);
+
+  cur->recent_cpu = FLOAT_ADD(mult3, FLOAT_CONST(cur->nice));
+}
+
+void calcula_priority(struct thread* cur, void* JuliaPagao) {
+  float_type div1 = FLOAT_DIV(cur->recent_cpu, FLOAT_CONST(4))/F;
+  float_type temp = PRI_MAX - div1 - (cur->nice*2); 
+
+  cur->priority = temp > PRI_MAX ? PRI_MAX : (temp < PRI_MIN ? PRI_MAX : temp);
+}
+
+
 
 /* System-wide segundo o documento do site*/
-float_type load_avg; //eh um numero real
- //não sei onde calcula isso aqui
+float_type load_avg; 
+
+/* Nosso código termina aqui */
 
 static void kernel_thread (thread_func *, void *aux);
 
@@ -134,6 +164,7 @@ thread_init (void)
   init_thread (initial_thread, "main", PRI_DEFAULT);
   initial_thread->status = THREAD_RUNNING;
   initial_thread->tid = allocate_tid ();
+  //a primeira das threads inicializa assim
   initial_thread->nice = 0;
   initial_thread->recent_cpu = 0;
 }
@@ -157,14 +188,6 @@ thread_start (void)
 }
 
 //==============================================================================================================
-void calcula_recent_CPU(struct thread *cur, void *JuliaPagao) {
-  float_type mult1 = FLOAT_MULT(FLOAT_CONST(2), load_avg);
-  float_type mult2 = FLOAT_ADD(mult1, FLOAT_CONST(1));
-  float_type div1 = FLOAT_DIV(mult1, mult2);
-  float_type mult3 = FLOAT_MULT(div1, cur->recent_cpu);
-
-  cur->recent_cpu = FLOAT_ADD(mult3, FLOAT_CONST(cur->nice));
-}
 
 /* Called by the timer interrupt handler at each timer tick.
    Thus, this function runs in an external interrupt context. */
@@ -173,12 +196,9 @@ thread_tick (void)
 {
   struct thread *t = thread_current ();
 
-  if(t != idle_thread) t->recent_cpu = FLOAT_ADD(t->recent_cpu, FLOAT_CONST(1)); //testando
-
   /* Update statistics. */
   if (t == idle_thread){
     idle_ticks++;
-    // FLOAT_ADD_MIX(t->recent_cpu, 1);
   }
 #ifdef USERPROG
   else if (t->pagedir != NULL)
@@ -190,12 +210,14 @@ thread_tick (void)
   /* Enforce preemption. */
   if (++thread_ticks >= TIME_SLICE){
     intr_yield_on_return ();
-    // FLOAT_ADD_MIX(t->recent_cpu, 1);
   }
 
-  if(timer_ticks() % 100 == 0){
-    //ver em qual dos dois precisa calcular primeiro
+  /* Nosso código começa aqui */
+  thread_wakeup();
 
+  if(t != idle_thread) t->recent_cpu = FLOAT_ADD(t->recent_cpu, FLOAT_CONST(1)); 
+
+  if(timer_ticks() % 100 == 0){
     //atualizar também o load_avg com essa condição
     float_type _59_60 = FLOAT_DIV(FLOAT_CONST(59), FLOAT_CONST(60));
     float_type _1_60 = FLOAT_DIV(FLOAT_CONST(1), FLOAT_CONST(60));
@@ -206,6 +228,10 @@ thread_tick (void)
     //calcula o recent_CPU de todas as threads;
     thread_foreach(calcula_recent_CPU, NULL);
   }
+
+  //a cada 4 ticks mudar a prioridade das coisas
+  if(timer_ticks() % 4 == 0) thread_foreach(calcula_priority, NULL);
+  /* Nosso código termina aqui */
 }
 
 /* Prints thread statistics. */
@@ -271,13 +297,14 @@ thread_create (const char *name, int priority,
 
   /* Add to run queue. */
   thread_unblock (t);
-  //talvez chamar o thread_yield()
+  //talvez chamar o thread_yield();
 
   return tid;
 }
 
 //==============================================================================================================
 /*Nosso código começa aqui*/ 
+
 /* Esse trecho do código foi adicionado afim de lidar
 com a implementação do Alarm Clock aqui no PintOS.*/
 
@@ -334,13 +361,13 @@ thread_wakeup(void) {
     
     l = list_remove(l); 
     t->status = THREAD_READY;
-    list_push_back(&ready_list, &t->elem);
+    list_insert_ordered(&ready_list, &t->elem, compare_priority, NULL);
   }
 
   intr_set_level(old_level);
 }
 
-int thread_get_ready_threads() {
+int thread_get_ready_threads(void) {
   enum intr_level old_level;
   int ready_threads;
   ready_threads = list_size(&ready_list);
@@ -349,6 +376,57 @@ int thread_get_ready_threads() {
 
   return ready_threads;
 }
+
+/* Roubando o momento de executar */
+void thread_steal_execution(void){
+  struct list_elem* l = list_begin(&ready_list);
+  struct thread* t = list_entry(l, struct thread, elem);
+  if(thread_current()->priority < t->priority){
+    thread_yield();
+  }
+}
+
+/* Para quando a thread pode ser bloqueada ou não. 
+   Doa a prioridade caso esteja bloqueada por algum recurso */
+void thread_donate(void){
+  struct thread *t = thread_current();
+  struct lock* lock = t->block_lock;
+  
+  //não tem nenhuma thread com aquele recurso
+  if(lock->holder == NULL)
+    lock->max_priority = t->priority;
+  
+  //roubando recurso
+  if(lock->holder != NULL)
+    while(t->priority > lock->holder->priority){
+      lock->holder->priority = t->priority;
+      thread_steal_execution();
+      if(t->priority > lock->max_priority)
+        lock->max_priority = t->priority;
+      //troca a thread atual
+      t = lock->holder;
+      lock = t->block_lock;
+    }
+}
+
+/* Muda a prioridade da thread atual baseada na prioridade da thread com 
+   maior prioridae que doou sua prioridade para a thread atual. */
+void thread_lock_priority(void){
+  struct thread *t = thread_current();
+  int changed_priority = t->first_priority;
+
+  //prendeu algum recurso
+  if(!list_empty(&t->list_lock)){
+    list_sort(&t->list_lock, compare_lock_priority, NULL);
+    struct lock* l = list_entry(list_front(&t->list_lock), struct lock, elem);
+    if(l->max_priority > changed_priority) changed_priority = l->max_priority;
+  }
+
+  //voltando para a prioridade certa
+  t->priority = changed_priority;
+  thread_steal_execution();
+}
+
 /*Nosso código termina aqui*/
 
 //==============================================================================================================
@@ -388,7 +466,7 @@ thread_unblock (struct thread *t)
 
   old_level = intr_disable ();
   ASSERT (t->status == THREAD_BLOCKED);
-  list_push_back (&ready_list, &t->elem); 
+  list_insert_ordered (&ready_list, &t->elem, compare_priority, NULL); 
   t->status = THREAD_READY; 
   
   intr_set_level (old_level);
@@ -465,7 +543,7 @@ thread_yield (void)
 
   old_level = intr_disable ();
   if (cur != idle_thread) 
-    list_push_back (&ready_list, &cur->elem);   
+    list_insert_ordered (&ready_list, &cur->elem, compare_priority, NULL);   
   cur->status = THREAD_READY; 
   schedule ();
   intr_set_level (old_level);
@@ -516,7 +594,6 @@ thread_set_nice (int nice)
   cur->nice = nice; 
 
   //recalculando a prioridade 
-  //ver se precisa mudar algo aqui por causa de recent_cpu ser um float
   float_type div1 = FLOAT_DIV(cur->recent_cpu, FLOAT_CONST(4))/F;
   cur->priority = PRI_MAX - div1 - (cur->nice*2); 
   
@@ -651,13 +728,19 @@ init_thread (struct thread *t, const char *name, int priority)
   strlcpy (t->name, name, sizeof t->name);
   t->stack = (uint8_t *) t + PGSIZE;
   t->magic = THREAD_MAGIC;
+  t->priority = priority; 
+
+  /* Para o bloqueio de recursos */
+  t->first_priority = priority;
+  t->block_lock = NULL;
+  list_init(&t->list_lock);
+
+  /* Para os calculos das prioridades */
   if(t != initial_thread){
     struct thread *cur = thread_current();
     t->nice = cur->nice; /* Recebe do pai (glória) */
     t->recent_cpu = cur->recent_cpu; /* Recebe do pai(amém) */
   }
-  t->priority = priority; /*  Talvez mudar isso. obs.: tem que 
-                              depender do nice e do recent_cpu. */
 
   old_level = intr_disable ();
   list_push_back (&all_list, &t->allelem);
@@ -760,12 +843,6 @@ schedule (void)
   struct thread *prev = NULL;
 
   ASSERT (intr_get_level () == INTR_OFF);
-  /* TO DO:
-   * Ver de usar o thread_block, mas para o schedule 
-   * tem de verificar se uma thread esta bloqueada, alem de implementar 
-   * o unblock com o tempo
-   * */
-
   ASSERT (cur->status != THREAD_RUNNING);
   ASSERT (is_thread (next));
 

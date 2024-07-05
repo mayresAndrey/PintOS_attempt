@@ -11,6 +11,10 @@ struct semaphore
     struct list waiters;        /* List of waiting threads. */
   };
 
+/* Nosso código começa aqui */
+bool compare_sema_priority(const struct list_elem *a, const struct list_elem *b, void *aux);
+/* Nosso código termina aqui */
+
 void sema_init (struct semaphore *, unsigned value);
 void sema_down (struct semaphore *);
 bool sema_try_down (struct semaphore *);
@@ -22,6 +26,9 @@ struct lock
   {
     struct thread *holder;      /* Thread holding lock (for debugging). */
     struct semaphore semaphore; /* Binary semaphore controlling access. */
+    /* adicionando */
+    struct list_elem elem; /* lista de threads */
+    int max_priority; /* a prioridade maior de uma das threads esperando por esse recurso */
   };
 
 void lock_init (struct lock *);

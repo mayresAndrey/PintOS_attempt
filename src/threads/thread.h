@@ -130,9 +130,13 @@ struct thread
    /*Nosso código começa aqui*/
     int wakeup_time; /* Tempo que a thread precisa acordar. */
     int nice; /* A legalidade de uma thread com outras. */
-    /*Nosso código termina aqui*/
-    //sim, eh um numero real
     float_type recent_cpu; /* Medir o quanto de tempo da CPU recebeu recentemente. */
+
+    int first_priority; /* Prioridade anterior a doação */
+    struct lock* block_lock; /* Garantindo a espera para conseguir um recurso */
+    struct list list_lock; /* Quantos e quais recursos foram bloqueadas por essa thread*/
+
+    /*Nosso código termina aqui*/
   };
 
 //==============================================================================================================
@@ -146,9 +150,20 @@ extern bool thread_mlfqs;
 extern float_type load_avg; //eh um numero real
 
 //para o timer_sleep 
-bool compare_wakeup_time(const struct list_elem *a, const struct list_elem *b, void *aux);
+bool compare_wakeup_time(const struct list_elem *a, const struct list_elem *b, void *aux UNUSED);
 void thread_sleep(int64_t ticks);
 void thread_wakeup(void);
+
+//para o timer_interrupt
+bool compare_priority(const struct list_elem *a, const struct list_elem *b, void *aux UNUSED);
+void calcula_recent_CPU(struct thread *cur, void *JuliaPagao);
+int thread_get_ready_threads(void);
+
+//para o synch.h
+bool compare_lock_priority(const struct list_elem *a, const struct list_elem *b, void *aux UNUSED);
+void thread_steal_execution(void);
+void thread_donate(void);
+void thread_lock_priority(void);
 
 void thread_init (void);
 void thread_start (void);
