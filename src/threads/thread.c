@@ -73,6 +73,13 @@ int mypow(int p){
   return result;
 }
 
+bool compare_priority(const struct list_elem *a, const struct list_elem *b, void *aux UNUSED) {
+  struct thread *ta = list_entry (a, struct thread, elem);
+  struct thread *tb = list_entry (b, struct thread, elem);
+
+  return ta->priority < tb->priority;
+}
+
 //função para a comparação do timer_sleep
 bool compare_wakeup_time(const struct list_elem *a, const struct list_elem *b, void *aux UNUSED) {
   struct thread *ta = list_entry (a, struct thread, elem);
@@ -127,6 +134,8 @@ thread_init (void)
   init_thread (initial_thread, "main", PRI_DEFAULT);
   initial_thread->status = THREAD_RUNNING;
   initial_thread->tid = allocate_tid ();
+  initial_thread->nice = 0;
+  initial_thread->recent_cpu = 0;
 }
 
 /* Starts preemptive thread scheduling by enabling interrupts.
@@ -148,16 +157,23 @@ thread_start (void)
 }
 
 //==============================================================================================================
-/*NAO SEI EXATAMENTE ONDE COLOCA O recent_cpu
-  Each time a timer interrupt occurs, recent_cpu 
-  is incremented by 1 for the running thread only, 
-  unless the idle thread is running.*/
+void calcula_recent_CPU(struct thread *cur, void *JuliaPagao) {
+  float_type mult1 = FLOAT_MULT(FLOAT_CONST(2), load_avg);
+  float_type mult2 = FLOAT_ADD(mult1, FLOAT_CONST(1));
+  float_type div1 = FLOAT_DIV(mult1, mult2);
+  float_type mult3 = FLOAT_MULT(div1, cur->recent_cpu);
+
+  cur->recent_cpu = FLOAT_ADD(mult3, FLOAT_CONST(cur->nice));
+}
+
 /* Called by the timer interrupt handler at each timer tick.
    Thus, this function runs in an external interrupt context. */
 void
 thread_tick (void) 
 {
   struct thread *t = thread_current ();
+
+  if(t != idle_thread) t->recent_cpu = FLOAT_ADD(t->recent_cpu, FLOAT_CONST(1)); //testando
 
   /* Update statistics. */
   if (t == idle_thread){
@@ -170,7 +186,6 @@ thread_tick (void)
 #endif
   else{
     kernel_ticks++;
-    FLOAT_ADD_MIX(t->recent_cpu, 1); //testando
   }
   /* Enforce preemption. */
   if (++thread_ticks >= TIME_SLICE){
@@ -182,14 +197,14 @@ thread_tick (void)
     //ver em qual dos dois precisa calcular primeiro
 
     //atualizar também o load_avg com essa condição
-    //ver se precisa mudar algo aqui por causa de load_avg ser um float
     float_type _59_60 = FLOAT_DIV(FLOAT_CONST(59), FLOAT_CONST(60));
     float_type _1_60 = FLOAT_DIV(FLOAT_CONST(1), FLOAT_CONST(60));
     float_type mult1 = FLOAT_MULT(_59_60,load_avg);
     float_type mult2 = FLOAT_MULT_MIX(_1_60, thread_get_ready_threads());
     load_avg = FLOAT_ADD(mult1, mult2);
-    //msg("59/60 = %d", 10*(FLOAT_DIV(FLOAT_CONST(59), FLOAT_CONST(60))));
-    //msg("Load_avg = %d.%02d - %d", load_avg, load_avg %100, thread_get_ready_threads());
+
+    //calcula o recent_CPU de todas as threads;
+    thread_foreach(calcula_recent_CPU, NULL);
   }
 }
 
@@ -256,6 +271,7 @@ thread_create (const char *name, int priority,
 
   /* Add to run queue. */
   thread_unblock (t);
+  //talvez chamar o thread_yield()
 
   return tid;
 }
@@ -501,7 +517,8 @@ thread_set_nice (int nice)
 
   //recalculando a prioridade 
   //ver se precisa mudar algo aqui por causa de recent_cpu ser um float
-  cur->priority = PRI_MAX - FLOAT_DIV_MIX(cur->recent_cpu,4) - (cur->nice*2); 
+  float_type div1 = FLOAT_DIV(cur->recent_cpu, FLOAT_CONST(4))/F;
+  cur->priority = PRI_MAX - div1 - (cur->nice*2); 
   
   /* TEXTO TIRADO DAQUELE SITE DA STANFORD
     Sets the current thread's nice value to new_nice 
@@ -510,6 +527,7 @@ thread_set_nice (int nice)
     If the running thread no longer has the highest priority, yields.*/
   
   //a thread vai parar caso nao estiver na mais alta prioridade
+  //thread_yeld()
 }
 
 /* Returns the current thread's nice value. */
@@ -633,10 +651,11 @@ init_thread (struct thread *t, const char *name, int priority)
   strlcpy (t->name, name, sizeof t->name);
   t->stack = (uint8_t *) t + PGSIZE;
   t->magic = THREAD_MAGIC;
-
-  t->nice = 0; /* Sempre começa como '0'. */
-  t->recent_cpu = 0; /* Também sempre começa com '0'. */
-
+  if(t != initial_thread){
+    struct thread *cur = thread_current();
+    t->nice = cur->nice; /* Recebe do pai (glória) */
+    t->recent_cpu = cur->recent_cpu; /* Recebe do pai(amém) */
+  }
   t->priority = priority; /*  Talvez mudar isso. obs.: tem que 
                               depender do nice e do recent_cpu. */
 

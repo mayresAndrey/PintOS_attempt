@@ -1,4 +1,4 @@
-qemu-system-i386 -device isa-debug-exit -drive file=/tmp/_K996Uv3qE.dsk,format=raw,index=0,media=disk -m 4 -net none -nographic -monitor null
+qemu-system-i386 -device isa-debug-exit -drive file=/tmp/I9UqipBN8X.dsk,format=raw,index=0,media=disk -m 4 -net none -nographic -monitor null
 c[?7l[2J[0mSeaBIOS (version 1.15.0-1)
 Booting from Hard Disk...
 PPiiLLoo  hhddaa1
@@ -8,16 +8,16 @@ Kernel command line: -q run priority-donate-multiple
 Pintos booting with 3,968 kB RAM...
 367 pages available in kernel pool.
 367 pages available in user pool.
-Calibrating timer...  1,068,236,800 loops/s.
+Calibrating timer...  1,094,451,200 loops/s.
 Boot complete.
 Executing 'priority-donate-multiple':
 Kernel PANIC at ../../tests/threads/tests.c:62 in run_test(): no test named "priority-donate-multiple"
-Call stack: 0xc0029c67.
+Call stack: 0xc0029dc7.
 The `backtrace' program can make call stacks useful.
 Read "Backtraces" in the "Debugging Tools" chapter
 of the Pintos documentation for more information.
-Timer: 30 ticks
-Thread: 0 idle ticks, 30 kernel ticks, 0 user ticks
+Timer: 29 ticks
+Thread: 0 idle ticks, 29 kernel ticks, 0 user ticks
 Console: 606 characters output
 Keyboard: 0 keys pressed
 Powering off...
