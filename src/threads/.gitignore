@@ -1,3 +1,18 @@
+#pasta de build
 build
+build/
+.build/
+Build
+Build/
+.Build/
+BUILD
+BUILD/
+.BUILD/
 bochsrc.txt
 bochsout.txt
+
+#o que tem dentro do build
+.build/kernel.o
+build/kernel.o 
+.build/threads/
+build/threads/

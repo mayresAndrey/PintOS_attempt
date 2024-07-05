@@ -1,4 +1,4 @@
-//*14 of of 27 passed
+//*14 of 27 passed
 
 //alarm-single
 ../../utils/pintos -v -k -T 60 --qemu  -- -q  run alarm-single < /dev/null 2> tests/threads/alarm-single.errors > tests/threads/alarm-single.output

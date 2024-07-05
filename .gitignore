@@ -24,8 +24,10 @@ node_modules/
 # gerada com o uso do intelij
 .idea/
 # folder de build
-.Build/
+build
+build/
 .build/
+.Build/
 .BUILD/
 cscope.files
 cscope.out
