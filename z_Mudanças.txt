@@ -1,6 +1,0 @@
-No documento thread.c
-    void thread_yield (void)
-        Troca do THREAD_READY por THREAD_BLOCKED
-No documento thread.c
-    void thread_block(void)
-        Colocando elemento da thread atual na lista blocked_list
